@@ -1,0 +1,404 @@
+openapi: 3.0.0
+info:
+  title: Property Management API
+  version: 1.0.0
+  description: API for managing properties, tenants, and rental payments.
+
+servers:
+  - url: http://localhost:3000
+
+paths:
+  /api/auth/register:
+    post:
+      summary: Register a new user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+      responses:
+        201:
+          description: User registered successfully
+        500:
+          description: Error creating user
+
+  /api/auth/login:
+    post:
+      summary: Login a user and generate a JWT token
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+      responses:
+        200:
+          description: Login successful, JWT token generated
+        400:
+          description: Invalid credentials
+
+  /api/properties:
+    post:
+      summary: Add a new property
+      tags:
+        - Properties
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                address:
+                  type: string
+                type:
+                  type: string
+                units:
+                  type: integer
+                rental_cost:
+                  type: number
+              required:
+                - name
+                - address
+                - type
+                - rental_cost
+      responses:
+        201:
+          description: Property added successfully
+        500:
+          description: Error adding property
+
+    get:
+      summary: Get all properties
+      tags:
+        - Properties
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: List of all properties
+        500:
+          description: Error fetching properties
+
+  /api/properties/{id}:
+    put:
+      summary: Update a property
+      tags:
+        - Properties
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the property to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                address:
+                  type: string
+                type:
+                  type: string
+                units:
+                  type: integer
+                rental_cost:
+                  type: number
+      responses:
+        200:
+          description: Property updated successfully
+        500:
+          description: Error updating property
+
+    delete:
+      summary: Delete a property
+      tags:
+        - Properties
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the property to delete
+      responses:
+        200:
+          description: Property deleted successfully
+        500:
+          description: Error deleting property
+
+  /api/tenants:
+    post:
+      summary: Add a new tenant
+      tags:
+        - Tenants
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                contact:
+                  type: string
+                property_id:
+                  type: integer
+              required:
+                - name
+                - contact
+                - property_id
+      responses:
+        201:
+          description: Tenant added successfully
+        500:
+          description: Error adding tenant
+
+    get:
+      summary: Get all tenants
+      tags:
+        - Tenants
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: List of all tenants
+        500:
+          description: Error fetching tenants
+
+  /api/tenants/{id}:
+    put:
+      summary: Update a tenant
+      tags:
+        - Tenants
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the tenant to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                contact:
+                  type: string
+                property_id:
+                  type: integer
+      responses:
+        200:
+          description: Tenant updated successfully
+        500:
+          description: Error updating tenant
+
+    delete:
+      summary: Delete a tenant
+      tags:
+        - Tenants
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the tenant to delete
+      responses:
+        200:
+          description: Tenant deleted successfully
+        500:
+          description: Error deleting tenant
+
+  /api/payments:
+    post:
+      summary: Add a new payment
+      tags:
+        - Payments
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tenant_id:
+                  type: integer
+                date:
+                  type: string
+                  format: date
+                amount:
+                  type: number
+                settled:
+                  type: boolean
+              required:
+                - tenant_id
+                - date
+                - amount
+      responses:
+        201:
+          description: Payment added successfully
+        500:
+          description: Error adding payment
+
+    get:
+      summary: Get all payments
+      tags:
+        - Payments
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: List of all payments
+        500:
+          description: Error fetching payments
+
+  /api/payments/{id}:
+    put:
+      summary: Update a payment
+      tags:
+        - Payments
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the payment to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tenant_id:
+                  type: integer
+                date:
+                  type: string
+                  format: date
+                amount:
+                  type: number
+                settled:
+                  type: boolean
+      responses:
+        200:
+          description: Payment updated successfully
+        500:
+          description: Error updating payment
+
+    delete:
+      summary: Delete a payment
+      tags:
+        - Payments
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the payment to delete
+      responses:
+        200:
+          description: Payment deleted successfully
+        500:
+          description: Error deleting payment
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Property:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+        type:
+          type: string
+        units:
+          type: integer
+        rental_cost:
+          type: number
+    Tenant:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        contact:
+          type: string
+        property_id:
+          type: integer
+    Payment:
+      type: object
+      properties:
+        id:
+          type: integer
+        tenant_id:
+          type: integer
+        date:
+          type: string
+          format: date
+        amount:
+          type: number
+        settled:
+          type: boolean
